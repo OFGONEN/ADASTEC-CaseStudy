@@ -20,13 +20,14 @@ public class Curve : MonoBehaviour
 #endregion
 
 #region Properties
+	public Vector3[] CurveControlPointArrayLeft  => curve_control_point_array_left;
+	public Vector3[] CurveControlPointArrayRight => curve_control_point_array_right;
 #endregion
 
 #region Unity API
 #endregion
 
 #region API
-	[ Button ]
 	public void CreateCurve()
 	{
 		var pointCount = 1 + ( curve_control_point_count - 1 ) * 3;
