@@ -17,11 +17,14 @@ public class Curve : MonoBehaviour
   [ Header( "SETUP: Distance Mode" ) ]
     [ Min( 0.005f ) ] public float curve_node_distance = 1f;
 	public GameObject curve_node_prefab;
+	public bool curve_draw_mesh = true;
+	public bool curve_draw_curve = true;
 
-	[ SerializeField, HideInInspector ] Vector3[] curve_control_point_array_left;
-	[ SerializeField, HideInInspector ] Vector3[] curve_control_point_array_right;
-	[ SerializeField, HideInInspector ] List< Vector3 > curve_node_point_list_left;
-	[ SerializeField, HideInInspector ] List< Vector3 > curve_node_point_list_right;
+	[ SerializeField ] Vector3[] curve_control_point_array_left;
+	[ SerializeField ] Vector3[] curve_control_point_array_right;
+	[ SerializeField ] List< Vector3 > curve_node_point_list_left;
+	[ SerializeField ] List< Vector3 > curve_node_point_list_right;
+	[ SerializeField ] Mesh curve_mesh;
 #endregion
 
 #region Properties
@@ -84,10 +87,64 @@ public class Curve : MonoBehaviour
 			nodeObject.transform.position = curve_node_point_list_right[ i ];
 			nodeObject.transform.rotation = Quaternion.identity;
 		}
+
+		CreateMesh();
 	}
 #endregion
 
 #region Implementation
+	void CreateMesh()
+	{
+		curve_mesh = new Mesh();
+
+		var vertices = GetCurveMeshVertices();
+		curve_mesh.vertices  = vertices;
+		curve_mesh.triangles = GetCurveTriangles( vertices );
+
+		curve_mesh.RecalculateNormals();
+		curve_mesh.RecalculateBounds();
+	}
+
+	Vector3[] GetCurveMeshVertices()
+	{
+		var verticesArray = new List< Vector3 >( curve_node_point_list_left.Count * 2 );
+
+		// One line can have more node point than the other so clamp the for loop iteration count with shorter line's node count
+		int clamp = Mathf.Min( curve_node_point_list_left.Count, curve_node_point_list_right.Count );
+
+		for( var i = 0; i < clamp; i++ )
+		{
+			verticesArray.Add( curve_node_point_list_left[ i ] );
+			verticesArray.Add( curve_node_point_list_right[ i ] );
+		}
+
+		// If one line is longer than other, their node count can differ from eachother. Find the longer line and add its last node point to vertices list
+		if( clamp + 1 < curve_node_point_list_left.Count )
+			verticesArray.Add( curve_node_point_list_left[ clamp + 1 ] );
+		
+		if( clamp + 1 < curve_node_point_list_right.Count )
+			verticesArray.Add( curve_node_point_list_right[ clamp + 1 ] );
+
+		return verticesArray.ToArray();
+	}
+
+	int[] GetCurveTriangles( Vector3[] verticesArray )
+	{
+		var triesArray = new List< int >();
+
+		for( var i = 0; i < verticesArray.Length - 3; i += 2 )
+		{
+			triesArray.Add( i );
+			triesArray.Add( i + 2 );
+			triesArray.Add( i + 1 );
+
+			triesArray.Add( i + 1 );
+			triesArray.Add( i + 2 );
+			triesArray.Add( i + 3 );
+		}
+
+		return triesArray.ToArray();
+	}
 #endregion
 
 #region Editor Only
@@ -105,6 +162,34 @@ public class Curve : MonoBehaviour
 
 		DrawCurve( curve_control_point_array_left, curve_node_point_list_left );
 		DrawCurve( curve_control_point_array_right, curve_node_point_list_right );
+		DrawMesh();
+	}
+
+	void DrawMesh()
+	{
+		if( curve_mesh == null )
+			return;
+
+		if( curve_draw_mesh )
+			Gizmos.DrawMesh( curve_mesh, transform.position, Quaternion.identity );
+
+		//Info: Un-comment this to debug mesh creation
+		// var vertices  = curve_mesh.vertices;
+		// var triangles = curve_mesh.triangles;
+
+		// var verticalOffset = Vector3.up * 0.1f;
+
+		// for( var i = 0; i < vertices.Length; i++ )
+		// {
+		// 	Handles.Label( vertices[ i ] + verticalOffset, "Vert " + i );
+		// }
+
+		// for( var i = 0; i < triangles.Length - 3; i++ )
+		// {
+		// 	Handles.DrawLine( vertices[ triangles[ i ] ] + verticalOffset, vertices[ triangles[ i + 1 ] ] + verticalOffset );
+		// 	Handles.DrawLine( vertices[ triangles[ i + 1 ] ] + verticalOffset, vertices[ triangles[ i + 2 ] ] + verticalOffset );
+		// 	Handles.DrawLine( vertices[ triangles[ i + 2 ] ] + verticalOffset, vertices[ triangles[ i ] ] + verticalOffset );
+		// }
 	}
 
 	void DrawCurve( Vector3[] curveControlPoints, List< Vector3 > curveNodePoints )
@@ -144,7 +229,9 @@ public class Curve : MonoBehaviour
 				else
 					distanceDelta += currentDelta;
 
-				Handles.DrawLine( positionTemp, curvedPoint );
+				if( curve_draw_curve )
+					Handles.DrawLine( positionTemp, curvedPoint );
+
 				positionTemp = curvedPoint;
 			}
 		}
