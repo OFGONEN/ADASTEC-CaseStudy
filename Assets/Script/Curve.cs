@@ -4,8 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using EasyButtons;
-
 public class Curve : MonoBehaviour
 {
 #region Fields
