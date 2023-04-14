@@ -8,16 +8,18 @@ public class Curve : MonoBehaviour
 {
 #region Fields
 
-  [ Header( "Setup" ) ]
+  [ Header( "SETUP: Control Mode" ) ]
     [ Min( 2 ) ] public int curve_control_point_count = 2;
     [ Min( 0 ) ] public int curve_lane_offset_horizontal = 1;
     [ Min( 0.005f ) ] public float curve_step = 0.01f;
+
+  [ Header( "SETUP: Distance Mode" ) ]
     [ Min( 0.005f ) ] public float curve_node_distance = 1f;
 
-	[ SerializeField ] Vector3[] curve_control_point_array_left;
-	[ SerializeField ] Vector3[] curve_control_point_array_right;
-	[ SerializeField ] List< Vector3 > curve_node_point_list_left;
-	[ SerializeField ] List< Vector3 > curve_node_point_list_right;
+	[ SerializeField, HideInInspector ] Vector3[] curve_control_point_array_left;
+	[ SerializeField, HideInInspector ] Vector3[] curve_control_point_array_right;
+	[ SerializeField, HideInInspector ] List< Vector3 > curve_node_point_list_left;
+	[ SerializeField, HideInInspector ] List< Vector3 > curve_node_point_list_right;
 #endregion
 
 #region Properties
