@@ -14,22 +14,24 @@ public class CurveEditor : Editor
 		for( var i = 0; i < curve_left.Length; i++ )
         {
 		    EditorGUI.BeginChangeCheck();
-		    Vector3 newPosition = Handles.PositionHandle( curve_left[ i ], Quaternion.identity );
+		    Vector3 newPosition = Handles.PositionHandle( curve.transform.TransformPoint( curve_left[ i ] ), Quaternion.identity );
 
 		    if( EditorGUI.EndChangeCheck() )
 		    {
-				curve_left[ i ] = newPosition;
+				EditorUtility.SetDirty( curve );
+				curve_left[ i ] = curve.transform.InverseTransformPoint( newPosition );
 			}
         }
 
 		for( var i = 0; i < curve_right.Length; i++ )
 		{
 			EditorGUI.BeginChangeCheck();
-			Vector3 newPosition = Handles.PositionHandle( curve_right[ i ], Quaternion.identity );
+			Vector3 newPosition = Handles.PositionHandle( curve.transform.TransformPoint( curve_right[ i ] ), Quaternion.identity );
 
 			if( EditorGUI.EndChangeCheck() )
 			{
-				curve_right[ i ] = newPosition;
+				EditorUtility.SetDirty( curve );
+				curve_right[ i ] = curve.transform.InverseTransformPoint( newPosition );
 			}
 		}
 	}

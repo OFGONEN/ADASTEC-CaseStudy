@@ -13,8 +13,10 @@ public class Curve : MonoBehaviour
     [ Min( 0 ) ] public int curve_lane_offset_horizontal = 1;
     [ Min( 0.005f ) ] public float curve_step = 0.01f;
 
-	[ SerializeField ] Vector3[] curve_control_point_array_left;
-	[ SerializeField ] Vector3[] curve_control_point_array_right;
+	[ SerializeField, HideInInspector ] Vector3[] curve_control_point_array_left;
+	[ SerializeField, HideInInspector ] Vector3[] curve_control_point_array_right;
+	[ SerializeField ] List< Vector3 > curve_node_point_array_left;
+	[ SerializeField ] List< Vector3 > curve_node_point_array_right;
 #endregion
 
 #region Properties
@@ -32,10 +34,13 @@ public class Curve : MonoBehaviour
 		curve_control_point_array_left  = new Vector3[ pointCount ];
 		curve_control_point_array_right = new Vector3[ pointCount ];
 
+		curve_node_point_array_left  = new List< Vector3 >();
+		curve_node_point_array_right = new List< Vector3 >();
+
 		for( var i = 0; i < pointCount; i++ )
 		{
-			curve_control_point_array_left [ i ] = transform.position + transform.forward * i;
-			curve_control_point_array_right[ i ] = transform.position + transform.forward * i + transform.right * curve_lane_offset_horizontal;
+			curve_control_point_array_left [ i ] = transform.position + transform.forward * i + transform.right * curve_lane_offset_horizontal / 2f * -1f;
+			curve_control_point_array_right[ i ] = transform.position + transform.forward * i + transform.right * curve_lane_offset_horizontal / 2f;
 		}
 	}
 #endregion
@@ -58,15 +63,15 @@ public class Curve : MonoBehaviour
 	{
 		for( var i = 0; i < curveControlPoints.Length - 3; i += 3 )
 		{
-			Vector3 positionTemp = curveControlPoints[ i ];
+			Vector3 positionTemp = transform.TransformPoint( curveControlPoints[ i ] );
 
 			for( float delta = curve_step; delta <= 1; delta += curve_step )
 			{
 				var curvedPoint = PointCalculations.ReturnCubicBeizerCurvedPoint(
-					curveControlPoints[ i ],
-					curveControlPoints[ i + 1 ],
-					curveControlPoints[ i + 2 ],
-					curveControlPoints[ i + 3 ],
+					transform.TransformPoint( curveControlPoints[ i ] ),
+					transform.TransformPoint( curveControlPoints[ i + 1 ] ),
+					transform.TransformPoint( curveControlPoints[ i + 2 ] ),
+					transform.TransformPoint( curveControlPoints[ i + 3 ] ),
 					delta
 				);
 
