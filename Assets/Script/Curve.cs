@@ -94,7 +94,13 @@ public class Curve : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-		if( curve_control_point_array_left == null ) // IF Curve is not initiated
+		// IF Curve is not initiated
+		if( curve_control_point_array_left == null || 
+			curve_control_point_array_left.Length == 0 || 
+			curve_control_point_array_right.Length == 0 || 
+			curve_control_point_array_right == null || 
+			curve_node_point_list_left == null || 
+			curve_node_point_list_right == null ) 
 			return;
 
 		DrawCurve( curve_control_point_array_left, curve_node_point_list_left );
