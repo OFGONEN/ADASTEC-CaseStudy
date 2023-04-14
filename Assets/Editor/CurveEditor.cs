@@ -34,6 +34,12 @@ public class CurveEditor : Editor
 				curve_right[ i ] = curve.transform.InverseTransformPoint( newPosition );
 			}
 		}
+
+		for( var i = 0; i < curve.CurveNodePointListLeft.Count; i++ )
+			Handles.DrawWireCube( curve.CurveNodePointListLeft[ i ], 0.1f * Vector3.one );
+
+		for( var i = 0; i < curve.CurveNodePointListRight.Count; i++ )
+			Handles.DrawWireCube( curve.CurveNodePointListRight[ i ], 0.1f * Vector3.one );
 	}
 
     public override void OnInspectorGUI()
