@@ -21,7 +21,7 @@ public class PointCalculations
 		return pointOne + ( pointTwo - pointOne ) * lerpValue;
 	}
 
-	public static Vector3 ReturnCurvedPoint( Vector3 pointOne, Vector3 pointTwo, Vector3 pointThree, float lerpValue )
+	public static Vector3 ReturnQuadraticBeizerCurvedPoint( Vector3 pointOne, Vector3 pointTwo, Vector3 pointThree, float lerpValue )
 	{
 #if UNITY_EDITOR
 		if( lerpValue < 0 || lerpValue > 1 )
