@@ -20,11 +20,11 @@ public class Curve : MonoBehaviour
 	public bool curve_draw_mesh = true;
 	public bool curve_draw_curve = true;
 
-	[ SerializeField ] Vector3[] curve_control_point_array_left;
-	[ SerializeField ] Vector3[] curve_control_point_array_right;
-	[ SerializeField ] List< Vector3 > curve_node_point_list_left;
-	[ SerializeField ] List< Vector3 > curve_node_point_list_right;
-	[ SerializeField ] Mesh curve_mesh;
+	[ SerializeField, HideInInspector ] Vector3[] curve_control_point_array_left;
+	[ SerializeField, HideInInspector ] Vector3[] curve_control_point_array_right;
+	[ SerializeField, HideInInspector ] List< Vector3 > curve_node_point_list_left;
+	[ SerializeField, HideInInspector ] List< Vector3 > curve_node_point_list_right;
+	[ SerializeField, HideInInspector ] Mesh curve_mesh;
 #endregion
 
 #region Properties
