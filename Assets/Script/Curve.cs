@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+
 public class Curve : MonoBehaviour
 {
 #region Fields
@@ -15,6 +16,7 @@ public class Curve : MonoBehaviour
 
   [ Header( "SETUP: Distance Mode" ) ]
     [ Min( 0.005f ) ] public float curve_node_distance = 1f;
+	public GameObject curve_node_prefab;
 
 	[ SerializeField, HideInInspector ] Vector3[] curve_control_point_array_left;
 	[ SerializeField, HideInInspector ] Vector3[] curve_control_point_array_right;
@@ -35,6 +37,8 @@ public class Curve : MonoBehaviour
 #region API
 	public void CreateCurve()
 	{
+		EditorUtility.SetDirty( gameObject );
+
 		var pointCount = 1 + ( curve_control_point_count - 1 ) * 3;
 		curve_control_point_array_left  = new Vector3[ pointCount ];
 		curve_control_point_array_right = new Vector3[ pointCount ];
@@ -46,6 +50,39 @@ public class Curve : MonoBehaviour
 		{
 			curve_control_point_array_left [ i ] = transform.forward * i + transform.right * curve_lane_offset_horizontal / 2f * -1f;
 			curve_control_point_array_right[ i ] = transform.forward * i + transform.right * curve_lane_offset_horizontal / 2f;
+		}
+	}
+
+	public void DistanceMode()
+	{
+		EditorUtility.SetDirty( gameObject );
+
+		var listOfChildren = new List< Transform >();
+
+		for( var i = 0; i < transform.childCount; i++ )
+			listOfChildren.Add( transform.GetChild( i ) );
+		
+		for( var i = 0; i < listOfChildren.Count; i++ )
+			DestroyImmediate( listOfChildren[ i ].gameObject );
+		
+		for( var i = 0; i < curve_node_point_list_left.Count; i++ )
+		{
+			var nodeObject = GameObject.Instantiate( curve_node_prefab );
+			nodeObject.transform.SetParent( transform );
+
+			nodeObject.name               = "node_left_" + i;
+			nodeObject.transform.position = curve_node_point_list_left[ i ];
+			nodeObject.transform.rotation = Quaternion.identity;
+		}
+
+		for( var i = 0; i < curve_node_point_list_right.Count; i++ )
+		{
+			var nodeObject = GameObject.Instantiate( curve_node_prefab );
+			nodeObject.transform.SetParent( transform );
+
+			nodeObject.name               = "node_right_" + i;
+			nodeObject.transform.position = curve_node_point_list_right[ i ];
+			nodeObject.transform.rotation = Quaternion.identity;
 		}
 	}
 #endregion
