@@ -8,9 +8,11 @@ public class CurveEditor : Editor
 	{
 		Curve curve = target as Curve;
 
+		// Cache curve control point arrays
 		var curve_left  = curve.CurveControlPointArrayLeft;
 		var curve_right = curve.CurveControlPointArrayRight;
 
+		// Draw Curve Left Control Point Handles
 		for( var i = 0; i < curve_left.Length; i++ )
         {
 		    EditorGUI.BeginChangeCheck();
@@ -23,6 +25,7 @@ public class CurveEditor : Editor
 			}
         }
 
+		// Draw Curve Right Control Point Handles
 		for( var i = 0; i < curve_right.Length; i++ )
 		{
 			EditorGUI.BeginChangeCheck();
@@ -35,6 +38,7 @@ public class CurveEditor : Editor
 			}
 		}
 
+		//Draw Note Points
 		for( var i = 0; i < curve.CurveNodePointListLeft.Count; i++ )
 			Handles.DrawWireCube( curve.CurveNodePointListLeft[ i ], 0.1f * Vector3.one );
 
@@ -48,5 +52,8 @@ public class CurveEditor : Editor
 
         if( GUILayout.Button( "Create Curve" ) )
 			( target as Curve ).CreateCurve();
+		
+		if( GUILayout.Button( "Distance Mode"))
+			( target as Curve ).DistanceMode();
 	}
 }
